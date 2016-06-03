@@ -37,14 +37,19 @@ class NewVisitorTest(unittest.TestCase):
 
         todo_table = self.browser.find_element_by_id('id_list_table')
         rows = todo_table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1. Buy peacock feathers' for row in rows)
-        )
+        self.assertIn('1. Buy peacock feathers', [row.text for row in rows])
 
         # There is still a text box inviting her to add another item
         # She enters "Make a fly"
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Make a fly')
+        inputbox.send_keys(Keys.ENTER)
 
         # The page updates again, showing both items on her list
+        todo_table = self.browser.find_element_by_id('id_list_table')
+        rows = todo_table.find_elements_by_tag_name('tr')
+        self.assertIn('1. Buy peacock feathers', [row.text for row in rows])
+        self.assertIn('2. Make a fly', [row.text for row in rows])
 
         # There is explanatory text letting Jenn know her list will be available at a generated URL
 
