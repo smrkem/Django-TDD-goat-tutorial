@@ -12,6 +12,11 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+    def check_for_row_in_list_table(self, row_text):
+        todo_table = self.browser.find_element_by_id('id_list_table')
+        rows = todo_table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Jenn goes to the to-do app homepage
         self.browser.get('http://localhost:8000')
@@ -35,9 +40,7 @@ class NewVisitorTest(unittest.TestCase):
         # "1. Buy peacock feathers" as a to-do item
         inputbox.send_keys(Keys.ENTER)
 
-        todo_table = self.browser.find_element_by_id('id_list_table')
-        rows = todo_table.find_elements_by_tag_name('tr')
-        self.assertIn('1. Buy peacock feathers', [row.text for row in rows])
+        self.check_for_row_in_list_table('1. Buy peacock feathers')
 
         # There is still a text box inviting her to add another item
         # She enters "Make a fly"
@@ -46,10 +49,8 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
 
         # The page updates again, showing both items on her list
-        todo_table = self.browser.find_element_by_id('id_list_table')
-        rows = todo_table.find_elements_by_tag_name('tr')
-        self.assertIn('1. Buy peacock feathers', [row.text for row in rows])
-        self.assertIn('2. Make a fly', [row.text for row in rows])
+        self.check_for_row_in_list_table('1. Buy peacock feathers')
+        self.check_for_row_in_list_table('2. Make a fly')
 
         # There is explanatory text letting Jenn know her list will be available at a generated URL
 
