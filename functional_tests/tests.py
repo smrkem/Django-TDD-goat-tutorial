@@ -104,6 +104,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
             512,
             delta=5
         )
+
+        ## todo: verify local static style.css
         # self.assertAlmostEqual(inputbox.size['width'], 220, delta=10)
 
 
