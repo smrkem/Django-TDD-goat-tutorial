@@ -1,3 +1,4 @@
 Django==1.9.6
 gunicorn==19.6.0
 selenium==2.53.2
+whitenoise==3.2
