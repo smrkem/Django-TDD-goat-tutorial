@@ -31,3 +31,17 @@ class ItemValidationTest(FunctionalTest):
         self.get_item_input_box().send_keys('another to-do item\n')
         self.check_for_row_in_list_table('1. some to-do item')
         self.check_for_row_in_list_table('2. another to-do item')
+
+    def test_cannot_add_duplicate_item(self):
+        # Jenn starts a new list
+        self.browser.get(self.server_url)
+        self.get_item_input_box().send_keys('Start using real items\n')
+        self.check_for_row_in_list_table('1. Start using real items')
+
+        # She accidentally enters a duplicate item
+        self.get_item_input_box().send_keys('Start using real items\n')
+
+        # She sees a helpful error message
+        self.check_for_row_in_list_table('1. Start using real items')
+        error = self.browser.find_element_by_css_selector('.has-error')
+        self.assertEqual(error.text, "List item already exists in your list")
