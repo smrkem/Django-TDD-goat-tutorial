@@ -40,31 +40,6 @@ class NewListTest(TestCase):
         self.assertEqual(Item.objects.count(), 0)
 
 
-class NewItemTest(TestCase):
-
-    def test_can_save_a_POST_request_to_existing_list(self):
-        list_ = List.objects.create()
-
-        self.client.post(
-            '/lists/{0}/add_item'.format(list_.id),
-            data={'item_text': 'A new item for an existing list'}
-        )
-        self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, 'A new item for an existing list')
-        self.assertEqual(new_item.list, list_)
-
-    def test_redirects_to_list_view(self):
-        list_ = List.objects.create()
-
-        response = self.client.post(
-            '/lists/{0}/add_item'.format(list_.id),
-            data={'item_text': 'A new item for an existing list'}
-        )
-
-        self.assertRedirects(response, '/lists/{}/'.format(list_.id))
-
-
 class ListViewTest(TestCase):
 
     def test_uses_list_template(self):
@@ -93,6 +68,28 @@ class ListViewTest(TestCase):
 
         response = self.client.get('/lists/{}/'.format(correct_list.id))
         self.assertEqual(response.context['list'], correct_list)
+
+    def test_can_save_a_POST_request_to_existing_list(self):
+        list_ = List.objects.create()
+
+        self.client.post(
+            '/lists/{}/'.format(list_.id),
+            data={'item_text': 'A new item for an existing list'}
+        )
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, 'A new item for an existing list')
+        self.assertEqual(new_item.list, list_)
+
+    def test_POST_redirects_to_list_view(self):
+        list_ = List.objects.create()
+
+        response = self.client.post(
+            '/lists/{}/'.format(list_.id),
+            data={'item_text': 'A new item for an existing list'}
+        )
+
+        self.assertRedirects(response, '/lists/{}/'.format(list_.id))
 
 
 class HomePageTest(TestCase):
