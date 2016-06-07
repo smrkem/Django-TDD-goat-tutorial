@@ -91,6 +91,14 @@ class ListViewTest(TestCase):
 
         self.assertRedirects(response, '/lists/{}/'.format(list_.id))
 
+    def test_validation_errors_are_sent_to_list_page(self):
+        list_ = List.objects.create()
+        response = self.client.post('/lists/{}/'.format(list_.id), data={'item_text': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'list.html')
+        expected_error = escape("List items can't be empty")
+        self.assertContains(response, expected_error)
+
 
 class HomePageTest(TestCase):
 
