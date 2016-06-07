@@ -9,7 +9,7 @@ class LayoutAndStyleTest(FunctionalTest):
         self.browser.set_window_size(1024, 768)
 
         # And sees it is nicely styled
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.get_item_input_box()
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             512,
@@ -18,7 +18,7 @@ class LayoutAndStyleTest(FunctionalTest):
 
         # She starts a new list and sees the list page is also nicely styled
         inputbox.send_keys('testing\n')
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.get_item_input_box()
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             512,
