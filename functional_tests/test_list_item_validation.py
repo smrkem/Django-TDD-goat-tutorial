@@ -5,6 +5,9 @@ from selenium.webdriver.common.keys import Keys
 
 class ItemValidationTest(FunctionalTest):
 
+    def get_error_element(self):
+        return self.browser.find_element_by_css_selector('.has-error')
+
     def test_cannot_add_empty_list_item(self):
         # Jenn goes to the homepage and accidentally submits an empty list item.
         # She hits Enter on the empty input box
@@ -13,7 +16,7 @@ class ItemValidationTest(FunctionalTest):
 
         # The home page refreshes, and there is an error message saying that
         # list items cannot be blank.
-        error = self.browser.find_element_by_css_selector('.has-error')
+        error = self.get_error_element()
         self.assertEqual(error.text, "List items can't be empty")
 
         # She tries again with some text for the new item, which now works.
@@ -24,7 +27,7 @@ class ItemValidationTest(FunctionalTest):
         self.get_item_input_box().send_keys('\n')
 
         # Where she recieves a similar error
-        error = self.browser.find_element_by_css_selector('.has-error')
+        error = self.get_error_element()
         self.assertEqual(error.text, "List items can't be empty")
 
         # And she corrects it by filling in some text
@@ -43,5 +46,19 @@ class ItemValidationTest(FunctionalTest):
 
         # She sees a helpful error message
         self.check_for_row_in_list_table('1. Start using real items')
-        error = self.browser.find_element_by_css_selector('.has-error')
+        error = self.get_error_element()
         self.assertEqual(error.text, "List item already exists in your list")
+
+    def test_error_messages_cleeared_on_input(self):
+        # Jenn starts a new list in a way that casues a validation error:
+        self.browser.get(self.server_url)
+        self.get_item_input_box().send_keys('\n')
+        error = self.get_error_element()
+        self.assertTrue(error.is_displayed())
+
+        # She corrects the input by typing in the input box
+        self.get_item_input_box().send_keys('a')
+
+        # She is happy when the error message disappears
+        error = self.get_error_element()
+        self.assertFalse(error.is_displayed())
