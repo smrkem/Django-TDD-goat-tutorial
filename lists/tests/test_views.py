@@ -3,6 +3,7 @@ from django.utils.html import escape
 
 from lists.models import Item, List
 from lists.forms import ItemForm, EMPTY_ITEM_ERROR
+from unittest import skip
 
 
 class NewListTest(TestCase):
@@ -123,6 +124,18 @@ class ListViewTest(TestCase):
         self.assertIsInstance(response.context['form'], ItemForm)
         self.assertContains(response, 'name="text"')
 
+    @skip
+    def test_for_duplicate_item_show_error_on_page(self):
+        list_ = List.objects.create()
+        item1 = Item.objects.create(list=list_, text='same text')
+        response = self.client.post('/lists/{}/'.format(list_.id), data={
+            'text': 'same text'
+        })
+
+        expected_error = escape("List item already exists in your list")
+        self.assertContains(response, expected_error)
+        self.assertTemplateUsed(response, 'list.html')
+        self.assertEqual(Item.objects.count(), 1)
 
 
 class HomePageTest(TestCase):
