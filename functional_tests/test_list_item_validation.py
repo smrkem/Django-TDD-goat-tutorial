@@ -49,7 +49,7 @@ class ItemValidationTest(FunctionalTest):
         error = self.get_error_element()
         self.assertEqual(error.text, "List item already exists in your list")
 
-    def test_error_messages_cleeared_on_input(self):
+    def test_error_messages_cleared_on_input(self):
         # Jenn starts a new list in a way that casues a validation error:
         self.browser.get(self.server_url)
         self.get_item_input_box().send_keys('\n')
