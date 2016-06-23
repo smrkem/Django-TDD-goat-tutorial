@@ -23,15 +23,16 @@ test("initialize binds sign in button to navigator.id.request", function () {
     var mockRequestFunction = function () { requestWasCalled = true; };
     var mockNavigator = {
         id: {
-            request: mockRequestFunction
+            request: mockRequestFunction,
+            watch: function() {}
         }
     };
 
     Superlists.Accounts.initialize(mockNavigator);
 
-    $('#id_login').trigger('click'); //5
+    $('#id_login').trigger('click');
 
-    equal(requestWasCalled, true); //6
+    equal(requestWasCalled, true);
 });
 
 test("initialize calls navigator.id.watch", function() {
@@ -52,6 +53,20 @@ test("initialize calls navigator.id.watch", function() {
     'check watch function called'
   );
 });
+
+test("watch sees current user", function() {
+ var user = 'current user';
+ var token = 'csrf token';
+ var urls = {
+  'login': 'login url',
+  'logout': 'logout url'
+  };
+  var mockNavigator = {
+    id: { watch: sinon.mock() }
+  }
+
+
+}
   </script>
 
 </body>

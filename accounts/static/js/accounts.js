@@ -3,7 +3,7 @@ var initialize = function(navigator) {
       navigator.id.request();
     });
 
-    navigator.watch();
+    navigator.id.watch();
 };
 
 window.Superlists = {
