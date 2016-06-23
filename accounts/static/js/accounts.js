@@ -3,7 +3,16 @@ var initialize = function(navigator, user, token, urls) {
       navigator.id.request();
     });
 
-    navigator.id.watch({ loggedInUser: user });
+    var onLogin =
+    navigator.id.watch({
+        loggedInUser: user,
+        onlogin: function(assertion) {
+            $.post(
+                urls.login,
+                {assertion: assertion, csrfmiddlewaretoken: token}
+            );
+        }
+     });
 };
 
 window.Superlists = {
