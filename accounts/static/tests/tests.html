@@ -96,12 +96,6 @@ test("onlogin sends assertion with csrf token", function() {
   );
 });
 
-test("onlogout is just a place holder", function() {
-  Superlists.Accounts.initialize(mockNavigator, user, token, urls);
-  var onlogoutCallback = mockNavigator.id.watch.firstCall.args[0].onlogout;
-  equal(typeof onlogoutCallback, 'function', 'onlogout should be a function');
-});
-
 test("onlogin post failure should do navigator.id.logout", function() {
   mockNavigator.id.logout = sinon.mock();
   Superlists.Accounts.initialize(mockNavigator, user, token, urls);
@@ -115,6 +109,25 @@ test("onlogin post failure should do navigator.id.logout", function() {
   equal(mockNavigator.id.logout.called, true, 'should call logout');
 });
 
+test("onlogout does ajax post to logout url", function() {
+  Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+  var onlogoutCallback = mockNavigator.id.watch.firstCall.args[0].onlogout;
+  onlogoutCallback();
+  equal(requests.length, 1, 'check ajax request');
+  equal(requests[0].method, 'POST');
+  equal(requests[0].url, urls.logout, 'check url');
+});
+
+test("onlogout post sends csrf token", function() {
+  Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+  var onlogoutCallback = mockNavigator.id.watch.firstCall.args[0].onlogout;
+  onlogoutCallback();
+  equal(
+    requests[0].requestBody,
+    $.param({csrfmiddlewaretoken: token}),
+    'check POST token'
+  );
+});
   </script>
 
 </body>

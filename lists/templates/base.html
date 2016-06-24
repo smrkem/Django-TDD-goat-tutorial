@@ -57,7 +57,7 @@
     var token = "{{ csrf_token }}";
     var urls = {
       login: "{% url 'persona_login' %}",
-      logout: "TODO"
+      logout: "{% url 'logout' %}"
     };
     Superlists.Accounts.initialize(navigator, user, token, urls);
   });
