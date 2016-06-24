@@ -18,6 +18,23 @@
   <script>
 /*global $, test, equal, sinon, Superlists */
 
+test("initialize binds sign in button to navigator.id.request", function () {
+    var requestWasCalled = false;
+    var mockRequestFunction = function () { requestWasCalled = true; };
+    var mockNavigator = {
+        id: {
+            request: mockRequestFunction,
+            watch: function() {}
+        }
+    };
+
+    Superlists.Accounts.initialize(mockNavigator);
+    equal(requestWasCalled, false, 'check request not called yet');
+
+    $('#id_login').trigger('click');
+    equal(requestWasCalled, true, 'check request called after click');
+});
+
 var user, token, urls, mockNavigator, requests, xhr;
 module("navigator.id.watch tests", {
   setup: function() {
@@ -38,22 +55,7 @@ module("navigator.id.watch tests", {
     xhr.restore();
   }
 });
-test("initialize binds sign in button to navigator.id.request", function () {
-    var requestWasCalled = false;
-    var mockRequestFunction = function () { requestWasCalled = true; };
-    var mockNavigator = {
-        id: {
-            request: mockRequestFunction,
-            watch: function() {}
-        }
-    };
 
-    Superlists.Accounts.initialize(mockNavigator);
-
-    $('#id_login').trigger('click');
-
-    equal(requestWasCalled, true);
-});
 
 test("initialize calls navigator.id.watch", function() {
   Superlists.Accounts.initialize(mockNavigator, user, token, urls);
@@ -99,6 +101,20 @@ test("onlogout is just a place holder", function() {
   var onlogoutCallback = mockNavigator.id.watch.firstCall.args[0].onlogout;
   equal(typeof onlogoutCallback, 'function', 'onlogout should be a function');
 });
+
+test("onlogin post failure should do navigator.id.logout", function() {
+  mockNavigator.id.logout = sinon.mock();
+  Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+  var onloginCallback = mockNavigator.id.watch.firstCall.args[0].onlogin;
+  var server = sinon.fakeServer.create();
+  server.respondWith([403, {}, "permission denied"]);
+
+  onloginCallback();
+  equal(mockNavigator.id.logout.called, false, 'should not call logout yet');
+  server.respond();
+  equal(mockNavigator.id.logout.called, true, 'should call logout');
+});
+
   </script>
 
 </body>
