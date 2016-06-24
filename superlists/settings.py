@@ -56,6 +56,11 @@ MIDDLEWARE_CLASSES = [
 
 ROOT_URLCONF = 'superlists.urls'
 
+AUTH_USER_MODEL = 'accounts.User'
+AUTHENTICATION_BACKENDS = (
+    'accounts.authentication.PersonaAuthenticationBackend',
+)
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
